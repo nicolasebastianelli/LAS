@@ -1,0 +1,15 @@
+dn: cn=usage,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: stats
+olcAttributeTypes: ( 1005.1.1.1 NAME ( 'utente' )
+  DESC 'nome utente'
+  EQUALITY caseExactMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+olcAttributeTypes: ( 1005.1.1.2 NAME ( 'server' )
+  DESC 'lista ip che un server può utilizzare separati da -'
+  EQUALITY caseExactMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+olcObjectClasses: ( 1005.2.1.1 NAME 'vincoli'
+  MUST ( utente $ server)
+  STRUCTURAL )
+

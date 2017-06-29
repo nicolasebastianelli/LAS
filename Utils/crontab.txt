@@ -1,0 +1,8 @@
+«12 03 * * *»	tutte le mattine, più o meno alle 3
+«12 03 15 * *»	tutti i 15 del mese, alla stessa ora
+«12 03 31 * *»	7 volte l'anno, alla stessa ora
+«0 12 * * 0»	ogni domenica, a mezzogiorno
+«2 0 * * *»	ogni giorno, più o meno a mezzanotte
+«02 03 * * 1,5»	ogni lunedì e venerdì, alle 3 del mattino circa
+«*/5 9-17 * * mon,tue,wed,thu,fri» ogni 5 minuti, dalle 9 alle 17 da lunedì a venerdì.
+«0 9 10 jan *»	ogni anno il 10 gennaio alle ore 9

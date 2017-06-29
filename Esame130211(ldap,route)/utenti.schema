@@ -1,0 +1,17 @@
+dn: cn=initconf,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: initconf
+olcAttributeTypes: ( 1000.1.1.1 NAME ( 'utente' )
+        DESC 'Nome utente'
+        EQUALITY caseExactMatch
+        SUBSTR caseExactSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+olcAttributeTypes: ( 1000.1.1.2 NAME ( 'traffico' )
+        DESC 'Traffico utilizzato'
+        EQUALITY integerMatch
+        ORDERING integerOrderingMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+olcObjectClasses: ( 1000.2.1.1 NAME 'consumi'
+        DESC 'Traffico per utente'
+        MUST ( utente $ traffico )
+        )

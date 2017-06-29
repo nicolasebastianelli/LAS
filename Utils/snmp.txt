@@ -1,0 +1,21 @@
+#SNMP
+
+Modificando il file /etc/snmp/snmpd.conf si può aggiungere delle community, degli agenti, degli accessi e dei processi da monitorare.
+$ systemctl start snmpd (Avvio servizio snmp)
+$ systemctl status snmpd 
+$ snmpwalk -v 1 -c public localhost .1 (Elenca ricorsivamente tutti i rami di .1)
+$ snmpget -v 1 -c public localhost .1.3.6.1.4.1.2021.4.5.0 (Ottiene i dati un ramo) 
+$ snmpwalk -v 1 -On -c public localhost .1.3.6.1.4.1.2021.2 (Elenca il contenuto di una tabella, il flag -On restituisce il ramo esatto di ogni elemento in output)
+
+Esempio: (recuperare il numero di processi di un determinato servizio contenuto in una tabella senza sapere a priori il suo ramo)
+{
+	R=$(snmpwalk -v 1 -On -c public localhost .1.3.6.1.4.1.2021.2 | grep "STRING: sshd" | awk '{ print $1 }' | rev | cut -d "." -f 1)
+ 	snmpget -v 1 -c public localhost .1.3.6.1.4.1.2021.2.1.5.$R
+}
+
+Inserendo degli Extending agent , è possibile trovare più velocemente tramite una grep il processo cercato
+
+$ snmpwalk -v 1 -c public localhost .1 | grep test1
+
+
+

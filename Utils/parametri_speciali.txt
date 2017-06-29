@@ -1,0 +1,5 @@
+$$ pid attuale processo
+$! pid processo precedente
+$# numero di parametri
+$@ && $* stampa tutti i parametri passati $1 $2 $3 ... ${N}
+“$@“ parametri separati da quote "$1" "$2" "$3" ... "${N}"

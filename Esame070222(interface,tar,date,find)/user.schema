@@ -1,0 +1,14 @@
+
+attributetype ( 5.1 NAME 'Username'
+DESC 'User Name'
+EQUALITY caseIgnoreMatch
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 5.2 NAME 'ServerIP'
+DESC 'Backup Server Ip'
+EQUALITY caseIgnoreMatch
+SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( 5.3 NAME 'bserver' STRUCTURAL
+DESC 'Backup Server'
+MUST ( Username $ ServerIP ) )

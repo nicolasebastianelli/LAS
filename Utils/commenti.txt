@@ -1,0 +1,18 @@
+# Shutdown: Per avviarlo all'avvio inserire nel file /etc/rc0.d /path/to/script.sh
+
+# Startup: Per avviarlo allo spegnimento inserire nel file /etc/rc6.d /path/to/script.sh
+
+# Cron:per eseguire uno script ogni tot inserire con crontab -e questa la riga */5 * * * * /pathto/script.sh
+
+# SSH: generare sui router coppie di chiavi ssh mettere le chiavi pubbliche dei router su ogni client nel file /root/.ssh/authorized_keys
+
+#Syslog: inserire nel file /etc/rsyslog.conf di 10.1.1.253 
+#####  l’abilitazione alla ricezione udp e queste regole:
+#####  kern.=debug	/var/log/orphans.log
+#####  kern.=debug	@10.1.1.254
+##### inserire nel file /etc/rsyslog.conf di 10.1.1.254 
+##### l'abilitazione alla ricezione udp e queste regole:
+#####  kern.=debug	/var/log/orphans.log
+#####  kern.=debug	@10.1.1.253
+
+# Respawn: per garantire affidabilità anche in caso di guasti inserisco in /etc/inittab pi:2345:respawn:/path/to/route.sh

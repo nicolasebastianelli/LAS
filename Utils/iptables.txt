@@ -1,0 +1,113 @@
+#FIREWALL
+
+–IPTABLES:
+
+Implementa funzionalità di packet filter nei kernel Linux, ha il controllo dei pacchetti IP 
+in transito sulle interfacce di rete (loopback compreso).
+I pacchetti IP processati da IPTABLES sono soggetti a 
+diverse modalità di elaborazione chiamate table ciascuna delle quali è composta da gruppi di 
+regole denominate chain.
+
+IPTABLES definisce quattro tabelle principali 
+	– filter (filtraggio di pacchetti)
+	– nat (sostituzione di indirizzi IP)
+	– mangle (manipolazione ulteriore dei pacchetti: TOS, TTL, ...)
+	–raw (esclusione di pacchetti dal connection tracking)
+
+Le funzionalità di firewall vere e proprie sono implementate dalla tabella 
+filter, che si occupa di filtrare i pacchetti sulla base dell’interfaccia
+di provenienza e dei parametri contenuti nelle intestazioni IP e TCP
+
+Nella tabella filter sono presenti tre chain predefinite
+	– INPUT: contiene le regole di filtraggio da usare sui pacchetti in 
+	arrivo al firewall (destinati all’host locale)
+	– OUTPUT: contiene le regole da usare sui pacchetti in uscita dal 
+	firewall (originati dall’host locale)
+	– FORWARD: contiene le regole da usare sui pacchetti in transito 
+	nel firewall (inoltrati tra interfacce diverse)
+
+Una regola può stabilire se scartare (DROP), rifiutare esplicitamente (REJECT) 
+o accettare (ACCEPT) un pacchetto in base a
+	–interfaccia di rete coinvolta
+	–indirizzo IP di origine e/o destinazione
+	–protocollo (TCP, UDP, ICMP)
+	–porta TCP o UDP di origine e/o destinazione
+	–tipo di messaggio ICMP
+
+–COMANDI iptables filter:
+
+$ iptables -L (Visualizzare le regole in uso delle chain della tabella filter)
+
+$ iptables -P <chain> <policy> (aggiunge policy ad una determinata chain)
+
+$ iptables -A <chain> <options> -j <policy> (Per aggiungere una regola in coda ad una chain)
+
+$ iptables -I <chain> <N> <options> -j <policy> (Per inserire una regola in una chain nella posizione <N>)
+
+$ iptables -R <chain> <N> <options> -j <policy> (Per sostituire la regola nella posizione <N> di una chain)
+
+$ iptables -D <chain> <N> (Per eliminare la regola nella posizione <N> di una chain)
+
+$ iptables -F <chain>
+$ iptables -F (Per eliminare (flush) tutte le regole da una specifica chain o da tutte le chain (non agisce sulla policy di default))
+
+$ iptables -p tcp | udp | icmp | (Per specificare il protocollo)
+
+$ iptables -s <address>/<netmask> (Per specificare ip di origine)
+
+$ iptables -d <address>/<netmask> (Per specificare ip di destinazione)
+
+$ iptables -N "$CONN" (per creare una nuova chain)
+
+$ watch iptables -vnL FORWARD (Monitora per le regole FORWARD il numero fi pacchetti trattati)
+
+–ESEMPIO:
+$ iptables -P INPUT DROP (blocchi connessioni in entrata)
+$ iptables -P INPUT REJECT (blocchi connessioni in entrata e risponde con ping icmp)
+$ iptables -P OUTPUT DROP (blocchi connessioni in uscita)
+$ iptables -P FORWARD DROP (blocchi connessioni forward)
+$ iptables -I INPUT -i lo -j ACCEPT (permette il traffico interno)
+$ iptables -I OUTPUT -o lo -j ACCEPT (permette il traffico interno)
+$ iptables -I FORWARD -s 10.1.1.1 -d 10.9.9.1 -p icmp --icmp-type echo-request -j ACCEPT (permette il forward da 10.1.1.1 a 10.9.9.1 per pacchetti icmp di tipo echo-request)
+$ iptables -I FORWARD -d 10.1.1.1 -s 10.9.9.1 -p icmp --icmp-type echo-reply -j ACCEPT (permette il forward da 10.9.9.1 a 10.1.1.1 per pacchetti icmp di tipo echo-reply)
+$ iptables -A FORWARD -j LOG —-log-level warn --log-prefix " INIZIO "(In caso di errore i pacchetti vengono loggati nel file di log, nel file è possibile vedere indirizzi sorgente, destinazione e MAC)
+$ iptables -I FORWARD -s 10.1.1.1 -d 10.9.9.1 -p tcp --dport 22 -j ACCEPT (Permette la connessione ssh da 10.1.1.1 a 10.9.9.1 sulla porta di destinazione 22)
+$ iptables -I FORWARD -d 10.1.1.1 -s 10.9.9.1 -p tcp --sport 22 ! --syn -j ACCEPT (Permette la connessione ssh da  10.9.9.1 a 10.1.1.1 sulla porta sorgente 22 escludendo i pacchetti che hanno solo i flag di syn settato così da evitere connessioni a 10.1.1.1)
+$ iptables -I FORWARD -s 10.1.1.1 -d 10.9.9.1 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT ( se il pacchetto appartiene ad una connessione già stabilita allora viene accettato)
+$ iptables -I INPUT -s 10.9.9.0/24 -i eth1 -j ACCEPT (accetta i pacchetti provenienti da un determinato ip appartenente ad una certa interfaccia di rete)
+$ iptables -I OUTPUT -d 10.9.9.0/24 -o eth1 --state ESTABLISHED,RELATED -j ACCEPT (accetta i pacchetti in uscita su un determinato ip appartenente ad una certa interfaccia di rete)
+$ iptables -A OUTPUT -o eth0 -m owner --uid-owner 1000 -j DROP (elimina tutti i pacchetti in uscita su eth0 dell’utente con uid 1000, —-uid-owner utilizzabile solo con OUTPUT e POSTROUTING )
+
+–NETCAT:
+Permette di effettuare una connessione tra due host mostrando su stdout ciò che si riceve
+
+$ nc -l -p 3306 (si mette in ascolto su una determinata porta)
+$ nc 10.9.9.1 3306 (si connette ad un ip su una porta)
+
+–NAT:
+
+Tecnica per il filtraggio di pacchetti IP con sostituzione 
+degli indirizzi o mascheramento, le funzionalità di NAT sono 
+implementate da IPTABLES tramite la tabella nat.
+
+Nella tabella nat sono presenti tre chain predefinite:
+	–PREROUTING: contiene le regole da usare prima 
+	dell’instradamento per sostituire l’indirizzo di destinazione dei 
+	pacchetti (policy = Destination NAT o DNAT)
+	–POSTROUTING: contiene le regole da usare dopo 
+	l’instradamento per sostituire l’indirizzo di origine dei pacchetti 
+	(policy = Source NAT o SNAT)
+	–OUTPUT: contiene le regole da usare per sostituire l’indirizzo di 
+	destinazione dei pacchetti generati localmente (policy = DNAT)
+	La policy ACCEPT vuol dire assenza di conversione
+
+La policy MASQUERADE vuol dire conversione implicita 
+nell’indirizzo IP assegnato all’interfaccia di uscita
+
+–COMANDI iptables nat:
+
+$ iptables -t nat -L (mostra tutte le regole per il nat)
+
+$ iptables -t nat -I POSTROUTING -s 10.1.1.0/24 -d 10.9.9.0/24 -p tcp --dport 22 -j SNAT --to-source 10.9.9.254 (sostituisce l'ip sorgente con l'ip --to-source comportandosi proprio da nat)
+$ iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j DNAT --to 10.9.9.9 (permette il forward dei pacchetti tcp provenienti dalla rete eth0 e porta 80 verso 10.9.9.9 , deve essere impostata la chain $ iptables -A FORWARD -i eth0 -p tcp --dport 80 -d 10.9.9.9 -j ACCEPT)
+

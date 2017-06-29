@@ -1,0 +1,49 @@
+1/tcp	TCP Multiplexor
+2/tcp	compressnet Management Utility
+3/tcp	compressnet Compression Process
+7/udp	Echo Protocol
+8/udp	Bif Protocol
+9/udp	Discard Protocol
+13/tcp	Daytime Protocol
+17/tcp	Quote of the Day
+19/udp	Chargen Protocol
+20/tcp	FTP - Il file transfer protocol - data
+21/tcp	FTP - Il file transfer protocol - control
+22/tcp	SSH - Secure login, file transfer (scp, sftp) e port forwarding
+23/tcp	Telnet insecure text communications
+25/tcp	SMTP - Simple Mail Transfer Protocol (E-mail)
+53/tcp	DNS - Domain Name System
+53/udp	DNS - Domain Name System
+67/udp	BOOTP Bootstrap Protocol (Server) e DHCP Dynamic Host Configuration Protocol (Server)
+68/udp	BOOTP Bootstrap Protocol (Client) e DHCP Dynamic Host Configuration Protocol (Client)
+69/udp	TFTP Trivial File Transfer Protocol
+70/tcp	Gopher
+79/tcp	finger Finger
+80/tcp	HTTP HyperText Transfer Protocol (WWW)
+88/tcp	Kerberos Authenticating agent
+104/tcp	DICOM - Digital Imaging and Communications in Medicine
+110/tcp	POP3 Post Office Protocol (E-mail)
+113/tcp	ident vecchio sistema di identificazione dei server
+119/tcp	NNTP usato dai newsgroups usenet
+123/udp	NTP usato per la sincronizzazione degli orologi client-server
+137/udp	NetBIOS Name Service
+138/udp	NetBIOS Datagram Service
+139/tcp	NetBIOS Session Service
+143/tcp	IMAP4 Internet Message Access Protocol (E-mail)
+161/udp	SNMP Simple Network Management Protocol (Agent)
+162/udp	SNMP Simple Network Management Protocol (Manager)
+389/tcp	LDAP
+411/tcp	Direct Connect Usato per gli hub della suddetta rete
+443/tcp	HTTPS usato per il trasferimento sicuro di pagine web
+445/tcp	Microsoft-DS (Active Directory, share di Windows, Sasser-worm)
+445/udp	Microsoft-DS SMB file sharing
+465/tcp	SMTP - Simple Mail Transfer Protocol (E-mail) su SSL
+514/udp	SysLog usato per il system logging
+563/tcp	NNTP Network News Transfer Protocol (newsgroup Usenet) su SSL
+587/tcp	e-mail message submission (SMTP)
+591/tcp	FileMaker 6.0 Web Sharing (HTTP Alternate, si veda la porta 80)
+631/udp	IPP / CUPS Common Unix printing system (Il server di stampa sui sistemi operativi UNIX/Linux)
+636/tcp	LDAP su SSL
+666/tcp	Doom giocato in rete via TCP
+993/tcp	IMAP4 Internet Message Access Protocol (E-mail) su SSL
+995/tcp	POP3 Post Office Protocol (E-mail) su SSL

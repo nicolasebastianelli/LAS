@@ -1,0 +1,33 @@
+$ ip a: lista interfacce di rete numerandole, lo (local host,loopback) , eth0 ,eth1 ,eth2 (interfacce ethernet , ogniuna ha il suo ruolo e le sue regole indicando anche mac ipv4 broadcast e ipv6) , nel nostro caso la virtualbox fa da nat , quindi da router dando gli ip a client e server
+
+$ ip r: mostra lo stato attuale delle tabelle di routing
+
+$ ip a add 10.1.1.1/24 dev eth2: aggiunge un determinato ip ad una determinata interfaccia
+
+$ ip r add 10.9.9.0/24 via 10.1.1.254: aggiunge una regola alla tabella di routing ( per arrivare alla rete 10.9.9.0 bisogna passare per 10.1.1.254)
+
+Nel caso io spegnessi la macchina tutte le info inserite tramite ip a e ip r andrebbero perse, bisogna quindi modificare il file /etc/network/interfaces e riavviare il servizio di networking tramite $ systemctl restart networking
+
+Per effettuare forwarding delle connessioni da parte del router bisogna inserire net.ipv4.ip_forward=1 nel file /etc/sysctl.conf questo permette di far comunicare client e server passando dal router.
+
+Con il comando $traceroute è possibile vedere il percorso che effettua il pacchetto
+
+Con $ wireshark (interfaccia grafica) o $ tcpdump (riga di comando) è possibile catturare pacchetti che attraversano una determinata interfaccia di rete
+
+$ tcpdump -i eth2 -vlnp icmp (esempio)
+$ tcpdump -i eth2 -vlnp not host 192.168.1.1 (esempio)
+$ tcpdump -c "n" (termina dopo n pacchetti ricevuti")
+$ tcpdump -lnp -i eth2 'tcp[tcpflags] & (tcp-syn|tcp-fin) != 0 and src net 10.1.1.0/24 and dst net 10.9.9.0/24' (prende i pacchetti contenenti flag syn o fin e provenienti da tutta la rete 10.1.1.0/24 a 10.9.9.0/24)
+
+Filtri tcpdump:
+ src (ip sorgente)
+ dst (ip destinazione)
+ net src (rete sorgente)
+ net dst (rete destinazione)
+ src port (posta di arrivo)
+ dst port (porta di destinazione)
+ icmp
+ tcp
+ udp
+ 
+Con $ ss -ntp mostra lo stato delle socket e quindi le connessioni attive su una macchina con lo switch p  mi mostra anche il pid del processo

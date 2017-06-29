@@ -1,0 +1,7 @@
+# aggiungere queste direttive a /etc/rsyslog.conf del server
+
+local6.notice	@10.9.9.254
+
+# aggiungere queste direttive a /etc/rsyslog.conf del router
+
+local6.notice	/var/log/serverstats.log 

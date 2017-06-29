@@ -1,0 +1,77 @@
+LDAP
+Porta 389 tcp
+Folder: /etc/ldap/sldap.d/
+
+File e directory di configurazione: cn=confif.ldif , cn=confif
+
+$ systemctl start slapd (Avvio servizio slapd)
+$ systemctl status slapd (Verifico stato servizio slapd)
+
+-L'utilizzo di file .schema è utilizzato nelle versioni precedenti alla 2.2 mentre i file .ldif dalla versione 2.3 in poi
+$ ldapadd -Y EXTERNAL -H ldapi:/// -f filesystem.ldif (inserimento di nuovi elementi via ldap di un file filesystem.ldif per estendere attributi e classi)
+$ Include /etc/ldap/schema/filesystem.schema (inserimento di nuovi elementi via ldap di un file filesystem.schema per estendere attributi e classi)
+
+-Per vedere l'output di debugging, in caso il server non riparta dopo una modifica di configurazione, provare ad avviarlo con $ slapd -d 16383
+
+$ ldapsearch  -x  -b  dc=labammsis [ -s base | one | sub ]   [ filtro di ricerca ] (Interrogazione delle directory)
+
+$ ldapadd  -x  -D  "cn=admin,dc=labammsis"  -w  admin [  -f  file_ldif_da_inserire, se omesso usa stdin  ] (Per aggiungere entry alla directory)
+
+$ ldapmodify  -x  -D  "cn=admin,dc=labammsis"  -w  admin [  -f  file_ldif_da_inserire, se omesso usa stdin  ] (Per modificare entry alla directory)
+
+
+-ESEMPIO filesystem.schema:
+"attributetype ( 1000.1.1.1 NAME ( 'fn' 'filename' )
+        DESC 'nome del file'
+        EQUALITY caseExactMatch
+        SUBSTR caseExactSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1000.1.1.2 NAME ( 'fs' 'filesize' )
+        DESC 'dimensioni del file'
+        EQUALITY integerMatch
+	ORDERING integerOrderingMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+objectClass ( 1000.2.1.1 NAME 'dir'
+	DESC 'una directory'
+	MUST fn
+	MAY fs
+	AUXILIARY )
+
+objectClass ( 1000.2.1.2 NAME 'file'
+	DESC 'un file'
+	MUST ( fn $ fs )
+	AUXILIARY ) "
+
+-ESEMPIO filesystem.ldif:
+" dn: cn=filesystem,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: filesystem
+olcAttributeTypes: ( 1000.1.1.1 NAME ( 'fn' 'filename' )
+  DESC 'nome del file'
+  EQUALITY caseExactMatch
+  SUBSTR caseExactSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+olcAttributeTypes: ( 1000.1.1.2 NAME ( 'fs' 'filesize' )
+  DESC 'dimensioni del file'
+  EQUALITY integerMatch
+  ORDERING integerOrderingMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+olcObjectClasses: ( 1000.2.1.1 NAME 'dir'
+  DESC 'una directory'
+  MUST fn
+  MAY fs
+  AUXILIARY )
+olcObjectClasses: ( 1000.2.1.2 NAME 'file'
+  DESC 'un file'
+  MUST ( fn $ fs )
+  AUXILIARY ) "
+
+$ ldapsearch -Y EXTERNAL -H ldapi:/// -b "cn=schema,cn=config" -s sub | less
+
+-L'utilizzo del comando find è molto comodo nel generare degli ldif
+
+-Nel nostro caso il domain component (dc:) è labammsis, esempio: fn=interfaces,fn=network,fn=etc,dc=labammsis
+
+

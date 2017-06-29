@@ -1,0 +1,21 @@
+dn: cn=traffic,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: traffic
+olcAttributeTypes: ( 1005.1.1.1 NAME ( 'address' )
+  DESC 'indirizzo IP di un server'
+  EQUALITY caseExactMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+olcAttributeTypes: ( 1005.1.1.2 NAME ( 'port_bytes' )
+  DESC 'porta di un server'
+  EQUALITY caseExactMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+olcAttributeTypes: ( 1005.1.1.3 NAME ( 'timestamp' )
+  DESC 'timestamp del traffic'
+  EQUALITY integerMatch
+  ORDERING integerOrderingMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+olcObjectClasses: ( 1005.2.1.1 NAME 'traffic'
+  DESC 'un binding'
+  MUST ( address $ port_bytes $ timestamp )
+  STRUCTURAL )
+
